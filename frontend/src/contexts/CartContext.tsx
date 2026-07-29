@@ -3,6 +3,7 @@ import type { Product, SelectedAdditional } from "../types/Product";
 
 export interface CartItem {
     id: string;
+    cartItemId: string;
     product: Product;
     quantity: number;
     selectedAdditionals: SelectedAdditional[];
@@ -23,6 +24,14 @@ interface CartContextValue {
     ) => void;
     removeFromCart: (itemId: string) => void;
     updateQuantity: (itemId: string, quantity: number) => void;
+    updateCartItem: (cartItemId: string, updatedItem: {
+        product: Product;
+        quantity: number;
+        selectedAdditionals: SelectedAdditional[];
+        observation: string;
+        unitPrice: number;
+        totalPrice: number;
+    }) => void;
     clearCart: () => void;
 }
 
@@ -98,6 +107,7 @@ export function CartProvider({ children }: CartProviderProps) {
                     ...currentItems,
                     {
                         id: itemId,
+                        cartItemId: crypto.randomUUID(),
                         product,
                         quantity,
                         selectedAdditionals,
@@ -142,6 +152,37 @@ export function CartProvider({ children }: CartProviderProps) {
         });
     }, []);
 
+    const updateCartItem = useCallback(
+        (
+            cartItemId: string,
+            updatedItem: {
+                product: Product;
+                quantity: number;
+                selectedAdditionals: SelectedAdditional[];
+                observation: string;
+                unitPrice: number;
+                totalPrice: number;
+            },
+        ) => {
+            setItems((currentItems) =>
+                currentItems.map((item) =>
+                    item.cartItemId === cartItemId
+                        ? {
+                              ...item,
+                              product: updatedItem.product,
+                              quantity: updatedItem.quantity,
+                              selectedAdditionals: updatedItem.selectedAdditionals,
+                              observation: updatedItem.observation,
+                              unitPrice: updatedItem.unitPrice,
+                              totalPrice: updatedItem.totalPrice,
+                          }
+                        : item,
+                ),
+            );
+        },
+        [],
+    );
+
     const clearCart = useCallback(() => {
         setItems([]);
     }, []);
@@ -162,9 +203,10 @@ export function CartProvider({ children }: CartProviderProps) {
             addToCart,
             removeFromCart,
             updateQuantity,
+            updateCartItem,
             clearCart,
         }),
-        [items, getTotalItems, getTotalPrice, addToCart, removeFromCart, updateQuantity, clearCart],
+        [items, getTotalItems, getTotalPrice, addToCart, removeFromCart, updateQuantity, updateCartItem, clearCart],
     );
 
     return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

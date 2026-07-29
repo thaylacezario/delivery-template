@@ -16,7 +16,9 @@ function App() {
 
 function AppRoutes() {
   const location = useLocation();
-  const isProductDetails = Boolean(matchPath("/product/:id", location.pathname));
+  const isProductDetails = Boolean(
+    matchPath("/product/:id", location.pathname),
+  );
 
   return (
     <>

@@ -1,21 +1,53 @@
-import { useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useMemo, useState, useCallback } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { products } from "../../data/products";
 import styles from "./ProductDetails.module.css";
 
 export function ProductDetails() {
     const { id } = useParams();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const { addToCart } = useCart();
+    const { addToCart, updateCartItem, items } = useCart();
+
+    const cartItemId = searchParams.get("cartItemId");
+    const isEditing = Boolean(cartItemId);
+
+    const editingItem = useMemo(() => {
+        if (!cartItemId) {
+            return null;
+        }
+        return items.find((item) => item.cartItemId === cartItemId) ?? null;
+    }, [cartItemId, items]);
 
     const product = useMemo(() => {
+        if (editingItem) {
+            return editingItem.product;
+        }
         return products.find((item) => item.id === Number(id));
-    }, [id]);
+    }, [id, editingItem]);
 
-    const [quantity, setQuantity] = useState(1);
-    const [observations, setObservations] = useState("");
-    const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>({});
+    const initialQuantity = editingItem ? editingItem.quantity : 1;
+    const initialObservations = editingItem ? editingItem.observation : "";
+
+    const initialAddonQuantities = useMemo(() => {
+        if (!editingItem || !editingItem.product.additionals) {
+            return {};
+        }
+        const result: Record<string, number> = {};
+        for (const addon of editingItem.product.additionals) {
+            const selected = editingItem.selectedAdditionals.find(
+                (s) => s.additional.id === addon.id,
+            );
+            result[addon.id] = selected ? selected.quantity : 0;
+        }
+        return result;
+    }, [editingItem]);
+
+    const [quantity, setQuantity] = useState(initialQuantity);
+    const [observations, setObservations] = useState(initialObservations);
+    const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>(initialAddonQuantities);
+    const [isAdding, setIsAdding] = useState(false);
 
     const selectedAddons = useMemo(() => {
         if (!product?.additionals) {
@@ -60,17 +92,6 @@ export function ProductDetails() {
         return (product.price + additionalsTotal) * quantity;
     }, [additionalsTotal, product, quantity]);
 
-    if (!product) {
-        return (
-            <main className={styles.notFound}>
-                <h1>Produto não encontrado</h1>
-                <button type="button" className={styles.backButton} onClick={() => navigate("/")}>
-                    Voltar para a home
-                </button>
-            </main>
-        );
-    }
-
     const updateAddonQuantity = (addonId: string, delta: number, maxQuantity = 3) => {
         setAddonQuantities((current) => {
             const currentAmount = current[addonId] ?? 0;
@@ -82,15 +103,65 @@ export function ProductDetails() {
         });
     };
 
-    const handleAddToCart = () => {
-        addToCart(product, quantity, selectedAddons, observations);
-    };
+    const handleAddToCart = useCallback(() => {
+        if (!product || isAdding) {
+            return;
+        }
+
+        const additionalsTotalCalc = selectedAddons.reduce(
+            (sum, selected) => sum + selected.additional.price * selected.quantity,
+            0,
+        );
+        const itemUnitPrice = product.price + additionalsTotalCalc;
+        const itemTotal = itemUnitPrice * quantity;
+
+        if (isEditing && cartItemId) {
+            updateCartItem(cartItemId, {
+                product,
+                quantity,
+                selectedAdditionals: selectedAddons,
+                observation: observations,
+                unitPrice: itemUnitPrice,
+                totalPrice: itemTotal,
+            });
+        } else {
+            addToCart(product, quantity, selectedAddons, observations);
+        }
+
+        setIsAdding(true);
+
+        setTimeout(() => {
+            navigate("/", { state: { reopenCart: true } });
+        }, 400);
+    }, [
+        product,
+        quantity,
+        selectedAddons,
+        observations,
+        addToCart,
+        updateCartItem,
+        navigate,
+        isAdding,
+        isEditing,
+        cartItemId,
+    ]);
 
     const formatCurrency = (value: number) =>
         new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
         }).format(value);
+
+    if (!product) {
+        return (
+            <main className={styles.notFound}>
+                <h1>Produto não encontrado</h1>
+                <button type="button" className={styles.backButton} onClick={() => navigate("/")}>
+                    Voltar para a home
+                </button>
+            </main>
+        );
+    }
 
     return (
         <main className={styles.page}>
@@ -195,8 +266,17 @@ export function ProductDetails() {
                     </div>
                 </div>
 
-                <button type="button" className={styles.addButton} onClick={handleAddToCart}>
-                    Adicionar
+                <button
+                    type="button"
+                    className={`${styles.addButton} ${isAdding ? styles.addButtonAdded : ""}`}
+                    onClick={handleAddToCart}
+                    disabled={isAdding}
+                >
+                    {isAdding
+                        ? "Salvo ✓"
+                        : isEditing
+                          ? "Salvar alterações"
+                          : "Adicionar"}
                 </button>
             </footer>
         </main>
