@@ -1,0 +1,132 @@
+.wrapper {
+    width: fit-content;
+    max-width: min(100%, 360px);
+    padding: 0.7rem 0.85rem;
+    border-radius: 16px;
+    align-self: flex-start;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.infoRow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+}
+
+.address {
+    margin: 0;
+    color: #0f172a;
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.metaRow {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.84rem;
+    font-weight: 700;
+}
+
+.open {
+    color: #15803d;
+}
+
+.closed {
+    color: #dc2626;
+}
+
+.dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 999px;
+    background: currentColor;
+    flex-shrink: 0;
+}
+
+.toggle {
+    border: none;
+    background: transparent;
+    color: #0f172a;
+    font-size: 0.84rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0;
+    cursor: pointer;
+}
+
+.caret {
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 0.2s ease;
+}
+
+.caretOpen {
+    transform: rotate(180deg);
+}
+
+.dropdown {
+    width: min(100%, 220px);
+    margin-top: 0.4rem;
+    padding: 0;
+    border-radius: 14px;
+    background: transparent;
+    border: 1px solid transparent;
+    box-shadow: none;
+    display: grid;
+    gap: 0.35rem;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 180ms ease, opacity 180ms ease, padding 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dropdownOpen {
+    max-height: 220px;
+    opacity: 1;
+    padding: 0.5rem;
+    border-color: #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.dropdownClosed {
+    pointer-events: none;
+}
+
+.dropdownItem {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.75rem;
+    font-size: 0.82rem;
+    color: #334155;
+}
+
+.scheduleValue {
+    color: #0f172a;
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .wrapper {
+        padding: 0.8rem 1rem;
+        max-width: 380px;
+    }
+
+    .address {
+        font-size: 0.96rem;
+    }
+}

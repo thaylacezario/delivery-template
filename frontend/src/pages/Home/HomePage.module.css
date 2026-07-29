@@ -1,0 +1,22 @@
+.storeInfoWrapper {
+    padding: 0 16px 12px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.mainContent {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: calc(120px + env(safe-area-inset-bottom, 0px));
+}
+
+.emptyState {
+    margin: 0;
+    padding: 1.25rem 1rem;
+    border-radius: 18px;
+    background: #fff7ed;
+    color: #9a2c00;
+    text-align: center;
+    font-weight: 600;
+}
