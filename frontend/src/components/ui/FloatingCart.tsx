@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import styles from "./FloatingCart.module.css";
 import { useCart } from "../../hooks/useCart";
@@ -16,29 +16,36 @@ export function FloatingCart() {
     const [isOpen, setIsOpen] = useState(
         location.state?.reopenCart && items.length > 0,
     );
+    const [isLeaving, setIsLeaving] = useState(false);
+    const prevHasItems = useRef(items.length > 0);
 
     if (location.state?.reopenCart && items.length > 0) {
         window.history.replaceState({}, "");
     }
 
+    const hasItems = items.length > 0;
     const totalItems = getTotalItems();
     const totalPrice = getTotalPrice();
 
-    if (items.length === 0) {
-        return (
-            <div className={styles.shell}>
-                <button type="button" className={styles.summary} onClick={() => setIsOpen(true)}>
-                    <span className={styles.badge}>{totalItems}</span>
-                    <span className={styles.label}>Carrinho vazio</span>
-                    <span className={styles.total}>{formatCurrency(0)}</span>
-                </button>
-                <CartBottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)} />
-            </div>
-        );
+    useEffect(() => {
+        if (hasItems && !prevHasItems.current) {
+            setIsLeaving(false);
+        } else if (!hasItems && prevHasItems.current) {
+            setIsLeaving(true);
+            const timer = setTimeout(() => {
+                setIsLeaving(false);
+            }, 200);
+            return () => clearTimeout(timer);
+        }
+        prevHasItems.current = hasItems;
+    }, [hasItems]);
+
+    if (!hasItems && !isLeaving) {
+        return null;
     }
 
     return (
-        <div className={styles.shell}>
+        <div className={`${styles.shell} ${isLeaving ? styles.leaving : styles.visible}`}>
             <button type="button" className={styles.summary} onClick={() => setIsOpen(true)}>
                 <span className={styles.badge}>{totalItems}</span>
                 <span className={styles.label}>Ver carrinho</span>

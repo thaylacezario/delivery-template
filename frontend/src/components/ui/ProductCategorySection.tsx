@@ -24,7 +24,7 @@ export const ProductCategorySection = forwardRef<HTMLElement, ProductCategorySec
                 {products.length > 0 ? (
                     <ProductGrid products={products} />
                 ) : (
-                    <p className={styles.emptyState}>Nenhum produto disponível nesta categoria.</p>
+                    <p className={styles.emptyState}>Nada aqui por enquanto.</p>
                 )}
             </section>
         );

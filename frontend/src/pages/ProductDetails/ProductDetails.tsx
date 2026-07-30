@@ -2,6 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { useCart } from "../../hooks/useCart";
 import { products } from "../../data/products";
+import { Toast } from "../../components/ui/Toast/Toast";
 import styles from "./ProductDetails.module.css";
 
 export function ProductDetails() {
@@ -11,6 +12,7 @@ export function ProductDetails() {
     const { addToCart, updateCartItem, items } = useCart();
 
     const cartItemId = searchParams.get("cartItemId");
+    const fromCheckout = searchParams.get("from") === "checkout";
     const isEditing = Boolean(cartItemId);
 
     const editingItem = useMemo(() => {
@@ -48,6 +50,7 @@ export function ProductDetails() {
     const [observations, setObservations] = useState(initialObservations);
     const [addonQuantities, setAddonQuantities] = useState<Record<string, number>>(initialAddonQuantities);
     const [isAdding, setIsAdding] = useState(false);
+    const [showToast, setShowToast] = useState(false);
 
     const selectedAddons = useMemo(() => {
         if (!product?.additionals) {
@@ -129,10 +132,15 @@ export function ProductDetails() {
         }
 
         setIsAdding(true);
+        setShowToast(true);
 
         setTimeout(() => {
-            navigate("/", { state: { reopenCart: true } });
-        }, 400);
+            if (fromCheckout) {
+                navigate("/checkout");
+            } else {
+                navigate("/", { state: { reopenCart: true } });
+            }
+        }, 600);
     }, [
         product,
         quantity,
@@ -144,6 +152,7 @@ export function ProductDetails() {
         isAdding,
         isEditing,
         cartItemId,
+        fromCheckout,
     ]);
 
     const formatCurrency = (value: number) =>
@@ -157,7 +166,7 @@ export function ProductDetails() {
             <main className={styles.notFound}>
                 <h1>Produto não encontrado</h1>
                 <button type="button" className={styles.backButton} onClick={() => navigate("/")}>
-                    Voltar para a home
+                    Voltar para o cardápio
                 </button>
             </main>
         );
@@ -180,7 +189,7 @@ export function ProductDetails() {
             {product.additionals && product.additionals.length > 0 && (
                 <section className={styles.section}>
                     <div className={styles.sectionHeader}>
-                        <h2>Adicionais</h2>
+                        <h2>Escolha seus adicionais</h2>
                     </div>
                     <div className={styles.addonsList}>
                         {product.additionals.map((addon) => {
@@ -227,14 +236,14 @@ export function ProductDetails() {
 
             <section className={styles.section}>
                 <div className={styles.sectionHeader}>
-                    <h2>Observações</h2>
+                        <h2>Alguma observação?</h2>
                 </div>
                 <textarea
                     className={styles.textarea}
                     rows={3}
                     value={observations}
                     onChange={(event) => setObservations(event.target.value)}
-                    placeholder="Ex.: sem cebola, molho separado ou carne bem passada."
+                    placeholder="Ex.: sem cebola, ponto da carne, retirar tomate..."
                 />
             </section>
 
@@ -273,12 +282,18 @@ export function ProductDetails() {
                     disabled={isAdding}
                 >
                     {isAdding
-                        ? "Salvo ✓"
+                        ? "✓ Adicionado"
                         : isEditing
-                          ? "Salvar alterações"
-                          : "Adicionar"}
+                          ? "Atualizar pedido"
+                          : "Adicionar ao carrinho"}
                 </button>
             </footer>
+
+            <Toast
+                message="Adicionado ao carrinho"
+                visible={showToast}
+                onHide={() => setShowToast(false)}
+            />
         </main>
     );
 }

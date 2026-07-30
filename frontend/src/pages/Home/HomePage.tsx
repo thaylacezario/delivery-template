@@ -4,16 +4,19 @@ import { CategoryNavigation } from "../../components/ui/CategoryNavigation";
 import { ProductCategorySection } from "../../components/ui/ProductCategorySection";
 import { SearchBar } from "../../components/ui/SearchBar";
 import { StoreInfo } from "../../components/ui/StoreInfo/StoreInfo";
+import { useCart } from "../../hooks/useCart";
 import { categories } from "../../data/categories";
-import { getProductSections } from "../../data/catalog";
 import { products } from "../../data/products";
 import { storeSettings } from "../../data/storeSettings";
+import { normalizeSearchText } from "../../utils/normalizeSearchText";
 import styles from "./HomePage.module.css";
 
 export function HomePage() {
+    const { getTotalItems } = useCart();
     const [search, setSearch] = useState("");
     const [activeCategorySlug, setActiveCategorySlug] = useState("todos");
     const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+    const sectionsStartRef = useRef<HTMLDivElement | null>(null);
 
     const navigationCategories = useMemo(
         () => [{ id: 0, name: "Todos", slug: "todos", order: 0, active: true }, ...categories.filter((category) => category.active).sort((a, b) => a.order - b.order)],
@@ -21,11 +24,37 @@ export function HomePage() {
     );
 
     const visibleSections = useMemo(() => {
-        return getProductSections(categories, products, search);
+        const normalizedSearch = normalizeSearchText(search);
+        const activeCategories = categories
+            .filter((category) => category.active)
+            .sort((a, b) => a.order - b.order);
+        const activeProducts = products
+            .filter((product) => product.active !== false)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+        return activeCategories
+            .map((category) => ({
+                category,
+                products: activeProducts.filter((product) => {
+                    const sameCategory = product.categoryId === category.id || product.category === category.name;
+                    if (!sameCategory) {
+                        return false;
+                    }
+
+                    if (!normalizedSearch) {
+                        return true;
+                    }
+
+                    const searchableText = normalizeSearchText(`${product.name} ${product.description}`);
+                    return searchableText.includes(normalizedSearch);
+                }),
+            }))
+            .filter((section) => section.products.length > 0);
     }, [search]);
 
     useEffect(() => {
         if (visibleSections.length === 0) {
+            setActiveCategorySlug("todos");
             return;
         }
 
@@ -55,6 +84,27 @@ export function HomePage() {
         return () => observer.disconnect();
     }, [visibleSections]);
 
+    useEffect(() => {
+        const marker = sectionsStartRef.current;
+        if (!marker) {
+            return;
+        }
+
+        const markerObserver = new IntersectionObserver(
+            ([entry]) => {
+                if (entry.isIntersecting) {
+                    setActiveCategorySlug("todos");
+                }
+            },
+            {
+                threshold: 0.4,
+            },
+        );
+
+        markerObserver.observe(marker);
+        return () => markerObserver.disconnect();
+    }, []);
+
     const handleCategorySelect = (slug: string) => {
         setActiveCategorySlug(slug);
 
@@ -78,7 +128,7 @@ export function HomePage() {
                 <StoreInfo store={storeSettings} />
             </div>
 
-            <main className={styles.mainContent}>
+            <main className={`${styles.mainContent} ${getTotalItems() > 0 ? styles.hasCart : ""}`}>
                 <section
                     style={{
                         background: "linear-gradient(135deg, #fff7ed, #ffe4e6)",
@@ -92,7 +142,7 @@ export function HomePage() {
                         Sabores que chegam até você
                     </h1>
                     <p style={{ margin: 0, color: "#475569", fontSize: "1rem" }}>
-                        Escolha seus favoritos e monte seu pedido com rapidez.
+                        Escolha seus favoritos e monte seu pedido.
                     </p>
                 </section>
 
@@ -108,7 +158,7 @@ export function HomePage() {
                     <SearchBar value={search} onSearchChange={setSearch} />
                 </div>
 
-                <div id="category-sections-start" />
+                <div id="category-sections-start" ref={sectionsStartRef} />
 
                 {visibleSections.length > 0 ? (
                     visibleSections.map((section) => (
@@ -122,7 +172,7 @@ export function HomePage() {
                         />
                     ))
                 ) : (
-                    <p className={styles.emptyState}>Nenhum produto encontrado.</p>
+                    <p className={styles.emptyState}>Nenhum item encontrado.</p>
                 )}
             </main>
         </>

@@ -79,7 +79,7 @@ export function StoreInfo({ store }: StoreInfoProps) {
                 <div className={styles.metaRow}>
                     <span className={`${styles.status} ${isCurrentlyOpen ? styles.open : styles.closed}`}>
                         <span className={styles.dot} />
-                        {isCurrentlyOpen ? "Aberto" : "Fechado"}
+                        {isCurrentlyOpen ? "Aberto agora" : "Fechado no momento"}
                     </span>
 
                     <button
@@ -88,7 +88,7 @@ export function StoreInfo({ store }: StoreInfoProps) {
                         aria-expanded={isOpen}
                         onClick={() => setIsOpen((current) => !current)}
                     >
-                        <span>Horários</span>
+                        <span>Ver horários</span>
                         <span className={`${styles.caret} ${isOpen ? styles.caretOpen : ""}`}>⌄</span>
                     </button>
                 </div>
@@ -97,7 +97,7 @@ export function StoreInfo({ store }: StoreInfoProps) {
             <div
                 className={`${styles.dropdown} ${isOpen ? styles.dropdownOpen : styles.dropdownClosed}`}
                 role="list"
-                aria-label="Horários da semana"
+                aria-label="Horários de funcionamento"
             >
                 {store.schedules.map((schedule) => (
                     <div key={schedule.day} className={styles.dropdownItem}>

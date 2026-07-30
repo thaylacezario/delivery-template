@@ -1,23 +1,30 @@
 import { BrowserRouter, Route, Routes, useLocation, matchPath } from "react-router-dom";
 import { CartProvider } from "./contexts/CartContext";
+import { CheckoutProvider } from "./contexts/CheckoutContext";
 import { FloatingCart } from "./components/ui/FloatingCart";
 import { HomePage } from "./pages/Home/HomePage";
 import { ProductDetails } from "./pages/ProductDetails/ProductDetails";
+import { CheckoutPage } from "./pages/Checkout/CheckoutPage";
+import { OrderConfirmation } from "./pages/OrderConfirmation/OrderConfirmation";
 
 function App() {
   return (
     <CartProvider>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
+      <CheckoutProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </CheckoutProvider>
     </CartProvider>
   );
 }
 
 function AppRoutes() {
   const location = useLocation();
-  const isProductDetails = Boolean(
-    matchPath("/product/:id", location.pathname),
+  const isSpecialRoute = Boolean(
+    matchPath("/product/:id", location.pathname) ||
+    matchPath("/checkout", location.pathname) ||
+    matchPath("/order-confirmation", location.pathname),
   );
 
   return (
@@ -25,8 +32,10 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/product/:id" element={<ProductDetails />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
       </Routes>
-      {!isProductDetails && <FloatingCart />}
+      {!isSpecialRoute && <FloatingCart />}
     </>
   );
 }

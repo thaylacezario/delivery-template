@@ -1,3 +1,5 @@
+import type { PaymentMethod } from "../types/checkout";
+
 export type DaySchedule = {
     day: string;
     enabled: boolean;
@@ -17,6 +19,10 @@ export type StoreSettings = {
         zipCode: string;
     };
     schedules: DaySchedule[];
+    acceptsDelivery: boolean;
+    acceptsPickup: boolean;
+    deliveryFee: number;
+    paymentMethods: PaymentMethod[];
 };
 
 export const storeSettings: StoreSettings = {
@@ -38,5 +44,13 @@ export const storeSettings: StoreSettings = {
         { day: "Sexta", enabled: true, openTime: "18:00", closeTime: "00:00" },
         { day: "Sábado", enabled: true, openTime: "18:00", closeTime: "00:00" },
         { day: "Domingo", enabled: true, openTime: "18:00", closeTime: "23:00" },
+    ],
+    acceptsDelivery: true,
+    acceptsPickup: true,
+    deliveryFee: 5.0,
+    paymentMethods: [
+        { id: "pix", name: "PIX", enabled: true, type: "pix" },
+        { id: "cash", name: "Dinheiro", enabled: true, type: "cash" },
+        { id: "card", name: "Cartão de crédito/débito", enabled: true, type: "card" },
     ],
 };

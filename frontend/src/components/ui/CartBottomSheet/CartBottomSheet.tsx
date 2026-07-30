@@ -91,9 +91,9 @@ export function CartBottomSheet({ isOpen, onClose }: CartBottomSheetProps) {
                     {items.length === 0 ? (
                         <div className={styles.emptyCart}>
                             <div className={styles.emptyIcon}>🛒</div>
-                            <p className={styles.emptyTitle}>Carrinho vazio</p>
+                            <p className={styles.emptyTitle}>Seu carrinho está vazio</p>
                             <p className={styles.emptyText}>
-                                Adicione produtos para começar seu pedido.
+                                Adicione itens deliciosos para começar! 🍔
                             </p>
                         </div>
                     ) : (
@@ -163,7 +163,7 @@ export function CartBottomSheet({ isOpen, onClose }: CartBottomSheetProps) {
                                                     styles.itemObservation
                                                 }
                                             >
-                                                Obs.: {item.observation}
+                                                📝 {item.observation}
                                             </p>
                                         )}
 
@@ -231,10 +231,11 @@ export function CartBottomSheet({ isOpen, onClose }: CartBottomSheetProps) {
                             type="button"
                             className={styles.checkoutButton}
                             onClick={() => {
-                                // Checkout será implementado futuramente
+                                onClose();
+                                navigate("/checkout");
                             }}
                         >
-                            Continuar para o checkout
+                            Finalizar pedido
                         </button>
                     </div>
                 )}

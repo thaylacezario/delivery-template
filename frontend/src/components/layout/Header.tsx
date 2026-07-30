@@ -8,7 +8,6 @@ export function Header({ companyName, logo }: HeaderProps) {
         <header
             style={{
                 display: "flex",
-                justifyContent: "space-between",
                 alignItems: "center",
                 padding: "16px",
                 backgroundColor: "#FFFFFF",
@@ -32,8 +31,6 @@ export function Header({ companyName, logo }: HeaderProps) {
 
                 <h2>{companyName}</h2>
             </div>
-
-            <button>🛒</button>
         </header>
     );
 }

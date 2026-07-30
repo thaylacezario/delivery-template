@@ -11,7 +11,7 @@ interface SearchBarProps {
 export function SearchBar({
     value,
     onSearchChange,
-    placeholder = "Busque por pratos ou categorias",
+    placeholder = "Buscar no cardápio",
     className,
 }: SearchBarProps) {
     const inputId = useId();
