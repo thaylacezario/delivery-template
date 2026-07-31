@@ -1,0 +1,69 @@
+.page {
+  min-height: 100dvh;
+  background: #f8fafc;
+  display: flex;
+}
+
+.mainContent {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.contentArea {
+  padding: 1.25rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+}
+
+.panelHeader {
+  margin-bottom: 0.65rem;
+}
+
+.panelTitle {
+  margin: 0;
+  color: #0f172a;
+  font-size: 1.05rem;
+}
+
+.comingSoonText {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.92rem;
+}
+
+@media (max-width: 1080px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .contentArea {
+    padding: 0.9rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .panel {
+    padding: 0.85rem;
+  }
+}

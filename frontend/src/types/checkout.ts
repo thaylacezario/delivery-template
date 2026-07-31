@@ -25,16 +25,26 @@ export interface Address {
     reference?: string;
 }
 
+export interface OrderDraftItemAdditional {
+    id: string;
+    name: string;
+    quantity: number;
+    unitPrice: number;
+    totalPrice: number;
+}
+
 export interface OrderDraftItem {
+    productId: number;
     productName: string;
     quantity: number;
-    additionals: string;
-    observation: string;
+    additionals: OrderDraftItemAdditional[];
+    observation?: string;
     unitPrice: number;
     totalPrice: number;
 }
 
 export interface OrderDraft {
+    createdAt: string;
     customer: Customer;
     fulfillmentType: FulfillmentType;
     deliveryAddress?: Address;

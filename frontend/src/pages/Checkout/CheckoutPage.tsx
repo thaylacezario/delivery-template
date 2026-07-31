@@ -25,6 +25,12 @@ function formatZipCode(value: string): string {
     return `${digits.slice(0, 5)}-${digits.slice(5)}`;
 }
 
+function parseCurrencyInput(value: string): number {
+    const normalized = value.replace(/[^\d,.-]/g, "").replace(".", "").replace(",", ".");
+    const parsedValue = parseFloat(normalized);
+    return Number.isNaN(parsedValue) ? 0 : parsedValue;
+}
+
 export function CheckoutPage() {
     const navigate = useNavigate();
     const { items, getTotalItems, getTotalPrice, clearCart, removeFromCart } = useCart();
@@ -168,7 +174,7 @@ export function CheckoutPage() {
             if (needsChange === null) {
                 newErrors.needsChange = "Informe se precisa de troco";
             } else if (needsChange === true) {
-                const changeValue = parseFloat(changeFor.replace(",", "."));
+                const changeValue = parseCurrencyInput(changeFor);
                 if (!changeFor.trim() || isNaN(changeValue) || changeValue < total) {
                     newErrors.changeFor = "O valor deve ser maior ou igual ao total";
                 }
@@ -211,20 +217,26 @@ export function CheckoutPage() {
         }
 
         const orderDraft: OrderDraft = {
+            createdAt: new Date().toISOString(),
             customer,
             fulfillmentType,
             deliveryAddress,
             paymentMethod: selectedPayment!,
             changeFor: selectedPayment?.type === "cash" && needsChange === true
-                ? parseFloat(changeFor.replace(",", "."))
+                ? parseCurrencyInput(changeFor)
                 : undefined,
             items: items.map((item) => ({
+                productId: item.product.id,
                 productName: item.product.name,
                 quantity: item.quantity,
-                additionals: item.selectedAdditionals
-                    .map((s) => `${s.additional.name}${s.quantity > 1 ? ` x${s.quantity}` : ""}`)
-                    .join(", "),
-                observation: item.observation,
+                additionals: item.selectedAdditionals.map((selected) => ({
+                    id: selected.additional.id,
+                    name: selected.additional.name,
+                    quantity: selected.quantity,
+                    unitPrice: selected.additional.price,
+                    totalPrice: selected.additional.price * selected.quantity,
+                })),
+                observation: item.observation || undefined,
                 unitPrice: item.unitPrice,
                 totalPrice: item.totalPrice,
             })),

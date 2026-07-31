@@ -71,11 +71,7 @@ export function ProductDetails() {
             return "";
         }
 
-        if (!product.ingredients?.length) {
-            return product.description;
-        }
-
-        return `${product.description} ${product.ingredients.join(", ")}.`;
+        return product.description;
     }, [product]);
 
     const additionalsTotal = useMemo(

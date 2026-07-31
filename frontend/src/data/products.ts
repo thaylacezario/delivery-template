@@ -4,7 +4,7 @@ export const products: Product[] = [
     {
         id: 1,
         name: "Combo Clássico",
-        description: "Hambúrguer, batata e refrigerante para compartilhar.",
+        description: "Hambúrguer artesanal no pão brioche, batata frita crocante e refrigerante gelado.",
         price: 39.9,
         image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
         category: "Combos",
@@ -20,7 +20,7 @@ export const products: Product[] = [
     {
         id: 2,
         name: "X-Bacon",
-        description: "Hambúrguer artesanal com bacon, cheddar e molho especial.",
+        description: "Pão brioche, hambúrguer artesanal, cheddar cremoso, bacon crocante, alface e molho especial.",
         price: 32.9,
         image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=80",
         category: "Hambúrgueres",
@@ -38,7 +38,7 @@ export const products: Product[] = [
     {
         id: 3,
         name: "X-Salada",
-        description: "Hambúrguer com alface, tomate e maionese verde.",
+        description: "Pão australiano, hambúrguer vegetariano, queijo mussarela, tomate, alface e maionese verde.",
         price: 29.9,
         image: "https://images.unsplash.com/photo-1520072959219-c595dc870360?auto=format&fit=crop&w=900&q=80",
         category: "Hambúrgueres",
@@ -55,7 +55,7 @@ export const products: Product[] = [
     {
         id: 4,
         name: "Hot Dog Artesanal",
-        description: "Pão macio, salsicha suculenta e molho especial.",
+        description: "Pão macio, salsicha suculenta, molho especial, cebola picada e batata palha.",
         price: 22.5,
         image: "https://images.unsplash.com/photo-1625772299848-391b6a87d7b3?auto=format&fit=crop&w=900&q=80",
         category: "Hot Dogs",
@@ -70,7 +70,7 @@ export const products: Product[] = [
     {
         id: 5,
         name: "Refrigerante Lata",
-        description: "Refrigerante gelado para acompanhar o pedido.",
+        description: "Refrigerante em lata servido gelado, com opção de gelo e limão.",
         price: 8.5,
         image: "https://images.unsplash.com/photo-1576107232684-2f7f8d5c3d2d?auto=format&fit=crop&w=900&q=80",
         category: "Bebidas",
@@ -86,7 +86,7 @@ export const products: Product[] = [
     {
         id: 6,
         name: "Petit Gâteau",
-        description: "Sobremesa cremosa com calda de chocolate.",
+        description: "Bolinho de chocolate com recheio cremoso, servido com calda de chocolate.",
         price: 16.5,
         image: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?auto=format&fit=crop&w=900&q=80",
         category: "Sobremesas",
